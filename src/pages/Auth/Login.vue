@@ -6,6 +6,8 @@ import {ref} from "vue";
 import GridBackground from "../../assets/GridBackground.vue";
 import getDinamicData from "../../services/requestFunction.ts";
 import JsonRequestOptions from "../../services/jsonRequest.ts";
+import {Toast} from "../../utils/alerts.ts";
+import router from "../../router/router.ts";
 
 
 const user = ref('');
@@ -18,7 +20,7 @@ async function login() {
       {
         name: 'USR',
         value: user.value,
-        type: 'int',
+        type: 'varchar',
       },
       {
         name: 'PASS',
@@ -29,7 +31,20 @@ async function login() {
   };
 
   const response = await getDinamicData(initSession);
-  console.log(response);
+  if(response.length === 0 ){
+    await Toast.fire({icon: 'error', title: 'Usuario no encontrado'})
+  }else{
+    sessionStorage.setItem('Nombre',response[0].NOMBRE);
+    sessionStorage.setItem('Correo',response[0].CORREO);
+    sessionStorage.setItem('Rol',response[0].ROL);
+    sessionStorage.setItem('Sexo',response[0].SEXO);
+    sessionStorage.setItem('UserAC',response[0].USER_AC);
+    sessionStorage.setItem('UserID',response[0].USER_ID);
+    await router.push('/usuarios')
+
+
+  }
+
 }
 </script>
 

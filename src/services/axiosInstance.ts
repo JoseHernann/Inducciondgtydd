@@ -1,6 +1,6 @@
 import axios from 'axios';
 const instance = axios.create({
-  baseURL: `https://webapijhps.azurewebsites.net/api/`,
+  baseURL: `http://vizionizewebapi.somee.com/api/`,
   timeout: 0,
   responseType: 'json',
   headers: {
