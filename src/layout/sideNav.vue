@@ -1,29 +1,43 @@
 <script setup lang="ts">
 import {
-  UserGroupIcon,
+  UserGroupIcon, DocumentIcon
 } from '@heroicons/vue/24/outline';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-const icons = [UserGroupIcon]; //Iconos en orden que se muestran en el sidebar
-const router = useRouter();
-const selectedRouteIndex = ref(0);
 
-const currentUser = sessionStorage.getItem('Name')  ?? 'Usuario';
-const userDepartment = sessionStorage.getItem('Department') ?? 'Departamento';
+const icons = [UserGroupIcon, DocumentIcon]; //Iconos en orden que se muestran en el sidebar
+import router from '../router/router.ts';
+
+
+const selectedRouteIndex = ref(0);
+const roleRoutes = getAuthorizedRoutes(sessionStorage.getItem('Rol') ?? '');
+
+
+const currentUser = sessionStorage.getItem('UserAC')  ?? 'Usuario';
+const userDepartment = sessionStorage.getItem('Departamento') ?? 'Departamento';
+
 function goToRoute(route: string, index: number) {
   selectedRouteIndex.value = index;
   router.push(route);
+
 }
+
 function getAuthorizedRoutes(rol: string) {
   return router.getRoutes().filter((route) => {
     return Array.isArray(route.meta.authorizedRoles) && route.meta.authorizedRoles.includes(rol);
   });
 }
-const roleRoutes = getAuthorizedRoutes('Administrador');
+
 
 onMounted(() => {
   router.push(roleRoutes[0].path as string);
 });
+
+function logout() {
+  sessionStorage.clear();
+  router.push('/login');
+}
+
+
 </script>
 
 <template>
@@ -33,7 +47,7 @@ onMounted(() => {
         <div
             :class="{
             ' text-secondary bg-white': selectedRouteIndex == index,
-
+             'text-white bg-primary': selectedRouteIndex != index,
             'flex items-center gap-3 mr-5 px-3 py-2 cursor-pointer transition-colors rounded-r-xl ': true,
           }"
             v-for="(options, index) in roleRoutes"
@@ -51,7 +65,7 @@ onMounted(() => {
             <span class="text-lg text-white   ">{{ currentUser }}</span>
             <span class="text-[10px] font-semibold text-white">{{userDepartment}}</span>
           </div>
-          <button class="bg-white text-secondary text-xl  py-2 rounded-xl px-16 ">
+          <button class="bg-white text-secondary text-xl  py-2 rounded-xl px-16 " @click="logout">
             Salir
           </button>
         </div>

@@ -14,25 +14,22 @@ import getDinamicData from "../../../services/requestFunction.ts";
 import JsonRequestOptions from "../../../services/jsonRequest.ts";
 import {Toast} from "../../../utils/alerts.ts";
 
-
 const users = ref()
 const onlyUpperCaseAndNumbersandDash = /^[A-Z0-9\-]+$/;
 const onlyUpperCase = /^[A-Z\s]+$/;
-const roles =  ['Adminstrador', 'Instructor',  'Usuario']
+const roles =  ['Administrador', 'Instructor',  'Usuario']
 const sexo = ['M', 'F'];
 
 onMounted(() => {
   getUsers();
 })
 
-
 async function getUsers() {
   const respondantObject = reactive<JsonRequestOptions>({
-    encryptedSP: '\tX_XiWWe/Nqvp64V4dm4lhm5gA==',
+    encryptedSP: 'X_XiWWe/Nqvp64V4dm4lhm5gA==',
   });
   users.value = await getDinamicData(respondantObject);
 }
-
 async function addUser(user) {
   const responseObject = reactive<JsonRequestOptions>({
     encryptedSP: 'X_XUUS3SER0iFm2pL8jzPz834F8jP7COB5p', //SP_AD_ADD_PRACTICANTE
@@ -66,21 +63,21 @@ async function addUser(user) {
         name: 'ROL',
         value: user.ROL,
         type: 'varchar',
+      },
+      {
+        name: 'DEPARTAMENTO',
+        value: user.DEPARTAMENTO,
+        type: 'varchar',
       }
     ],
   });
-
-  try {
-    const es = await getDinamicData(responseObject);
-    console.log(es)
+  try{
+    await getDinamicData(responseObject);
     await Toast.fire({icon: 'success', title: 'Usuario agregado'})
-  } catch (e: any) {
-    await Toast.fire({icon: 'error', title: 'Ocurrio un error'})
+  }catch (e){
+    await Toast.fire({icon: 'error', title: 'Error al agregar usuario'})
   }
 }
-
-
-
 
 </script>
 
@@ -126,6 +123,7 @@ async function addUser(user) {
               :displayExpr="users?.ROL"
           />
         </DxColumn>
+        <DxColumn data-field="DEPARTAMENTO" caption="DEPARTAMENTO" />
         <DxColumn data-field="SEXO" caption="SEXO">
           <DxLookup
               :data-source="sexo"
